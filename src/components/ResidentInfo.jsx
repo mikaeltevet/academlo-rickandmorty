@@ -7,12 +7,17 @@ function ResidentInfo(props) {
 
   useEffect(() => {
     const fetchData = async () => {
-      const result = await axios(props.url);
-      setResident(result.data);
-      setLoading(false);
-    };
+        try {
+          const result = await axios(props.url);
+          setResident(result.data);
+        } catch (error) {
+          console.error(error);
+        } finally {
+          setLoading(false);
+        }
+      };      
     fetchData();
-  }, []);
+  }, [props.url]);
 
   if (loading) {
     return <p>Loading...</p>;
@@ -24,7 +29,7 @@ function ResidentInfo(props) {
       <img src={resident.image} alt={resident.name} />
       <p>Status: {resident.status}</p>
       <p>Origin: {resident.origin.name}</p>
-      <p>Episode count: {resident.episode.length}</p>
+      <p>Episode count: {resident.episodes.length}</p>
     </div>
   );
 }

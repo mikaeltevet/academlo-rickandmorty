@@ -3,62 +3,61 @@ import axios from 'axios';
 import ResidentInfo from './components/ResidentInfo';
 import './App.css';
 
-function App() {
-  const [location, setLocation] = useState({});
-  const [loading, setLoading] = useState(true);
-  const [id, setId] = useState('');
-  const [residents, setResidents] = useState([]);
-
-  const handleChange = (event) => {
-    setId(event.target.value);
-  };
-
-  const handleClick = async () => {
-    const result = await axios(
-      `https://rickandmortyapi.com/api/location/${Number(id)}`,
-    );
-    setLocation(result.data.results.find((location) => location.id === id));
-    setLoading(false);
-  };
+const App = () => {
+  const [location, setLocation] = useState(null);
+  const [locationId, setLocationId] = useState('');
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const result = await axios(
-          `https://rickandmortyapi.com/api/location/${Number(id)}`,
-        );
-        setLocation(result.data.results.find((location) => location.id === id));
-        const residentPromises = location.residents.map((residentUrl) => axios(residentUrl));
-        const residentsResult = await Promise.all(residentPromises);
-        setResidents(residentsResult.map((result) => result.data));
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    fetchData();
-    }, []);
-    
-    if (loading) {
-      return <p>Loading...</p>;
-    }
-    
-    return (
-      <div>
-        <h1>{location.name}</h1>
-        <span><strong>type:</strong> {location.type}</span>
-        <span><strong>dimension:</strong> {location.dimension}</span>
-        <span><strong>population:</strong> {location.residents.length}</span>
-        <br/>
-        <input type="text" value={id} onChange={handleChange} />
-        <button onClick={handleClick}>Search</button>
-        {residents.map((resident) => (
-        <ResidentInfo key={resident.id} url={resident.url} />
-        ))}
-      </div>
+    // Fetch a random location on mount
+    (async () => {
+      const { data } = await axios.get(
+        'https://rickandmortyapi.com/api/location/'
+      );
+      setLocation(data.results[Math.floor(Math.random() * data.results.length)]);
+    })();
+  }, []);
+
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    // Search for location by ID
+    const { data } = await axios.get(
+      `https://rickandmortyapi.com/api/location/${locationId}`
     );
-    }
-    
-    export default App;    
+    setLocation(data);
+  };
+
+  return (
+    <div>
+      {location ? (
+        <>
+          <h1>{location.name}</h1>
+          <span><strong>type: </strong>{location.type}</span>
+          <span><strong>dimension: </strong>{location.dimension}</span>
+          <span><strong>population: </strong>{location.residents.length}</span>
+          <form onSubmit={handleSearch}>
+            <label htmlFor="location-id">
+              Enter a location ID:
+              <input
+                type="text"
+                id="location-id"
+                value={locationId}
+                onChange={(e) => setLocationId(e.target.value)}
+                required
+              />
+            </label>
+            <button type="submit">Search</button>
+          </form>
+          <div className="resident-grid">
+            {location.residents.map((resident) => (
+              <ResidentInfo key={resident.id} resident={resident} />
+            ))}
+          </div>
+        </>
+      ) : (
+        'Loading...'
+      )}
+    </div>
+  );
+};
+
+export default App;

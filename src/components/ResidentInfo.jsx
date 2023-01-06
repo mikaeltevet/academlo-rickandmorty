@@ -1,37 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import './ResidentInfo.css';
 
-function ResidentInfo(props) {
-  const [resident, setResident] = useState({});
-  const [loading, setLoading] = useState(true);
+const ResidentInfo = ({ resident }) => {
+  const [residentInfo, setResidentInfo] = useState(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-        try {
-          const result = await axios(props.url);
-          setResident(result.data);
-        } catch (error) {
-          console.error(error);
-        } finally {
-          setLoading(false);
-        }
-      };      
-    fetchData();
-  }, [props.url]);
+    (async () => {
+      // Fetch resident data from the Rick and Morty API
+      const { data } = await axios.get(resident);
+      setResidentInfo(data);
+    })();
+  }, [resident]);
 
-  if (loading) {
-    return <p>Loading...</p>;
+  if (!residentInfo) {
+    return 'Loading...';
   }
 
   return (
-    <div>
-      <h1>{resident.name}</h1>
-      <img src={resident.image} alt={resident.name} />
-      <p>Status: {resident.status}</p>
-      <p>Origin: {resident.origin.name}</p>
-      <p>Episode count: {resident.episodes.length}</p>
+    <div className="resident-card">
+      <img src={residentInfo.image} alt={residentInfo.name} />
+      <p><strong>Name: </strong>{residentInfo.name}</p>
+      <p><strong>Status: </strong>{residentInfo.status}</p>
+      <p><strong>Origin: </strong>{residentInfo.origin.name}</p>
+      <p><strong>Number of episodes: </strong>{residentInfo.episode.length}</p>
     </div>
   );
-}
+};
 
 export default ResidentInfo;

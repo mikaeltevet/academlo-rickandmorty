@@ -20,10 +20,12 @@ const ResidentInfo = ({ resident }) => {
   return (
     <div className="resident-card">
       <img src={residentInfo.image} alt={residentInfo.name} />
-      <p><strong>Name: </strong>{residentInfo.name}</p>
-      <p><strong>Status: </strong>{residentInfo.status}</p>
-      <p><strong>Origin: </strong>{residentInfo.origin.name}</p>
-      <p><strong>Number of episodes: </strong>{residentInfo.episode.length}</p>
+      <div className="resident-status">{residentInfo.status}</div>
+      <p className="resident-card-name">{residentInfo.name}</p>
+      <hr/>
+      <p><span>Species</span><br/>{residentInfo.species}</p>
+      <p><span>Origin</span><br/>{residentInfo.origin.name}</p>
+      <p><span>Number of episodes</span><br/>{residentInfo.episode.length}</p><br/>
     </div>
   );
 };

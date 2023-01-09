@@ -36,9 +36,9 @@ const App = () => {
         <>
           <div className="location-card">
             <h1>{location.name}</h1>
-            <span><strong>type: </strong>{location.type}</span>
-            <span><strong>dimension: </strong>{location.dimension}</span>
-            <span><strong>population: </strong>{location.residents.length}</span>
+            <span><strong>Type: </strong>{location.type}</span>
+            <span><strong>Dimension: </strong>{location.dimension}</span>
+            <span><strong>Population: </strong>{location.residents.length}</span>
             <form onSubmit={handleSearch}>
               <label htmlFor="location-id">
                 Enter a location ID:
